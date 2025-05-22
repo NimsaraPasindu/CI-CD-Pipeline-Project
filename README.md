@@ -1,71 +1,186 @@
-🚀 CI/CD Pipeline with Jenkins, Docker & Azure
 
-This project demonstrates a complete CI/CD pipeline for a Node.js application using Jenkins, Docker, and Azure Virtual Machines.
+# 🚀 CI/CD Pipeline with Jenkins, Docker & Azure VM
 
-🔧 Technologies Used
-Jenkins – CI/CD automation
+This project demonstrates a complete CI/CD pipeline for a Node.js application using **Jenkins**, **Docker**, and an **Azure Virtual Machine**.
 
-Docker – Containerize the application
+---
 
-Azure VM – Host and run the app in production
+## 📸 Project Demo
 
-GitHub – Source code repository
+| Jenkins Pipeline | Jenkins Job |
+|------------------|-------------|
+| ![Pipeline](images/pipeline.png) | ![Jenkins Job](images/jenkins-job.png) |
 
-Node.js / npm – App environment and testing
+| Azure VM Terminal | App in Browser |
+|-------------------|----------------|
+| ![Azure VM](images/azure-vm.png) | ![App UI](images/app-ui.png) |
 
-📦 Pipeline Stages
-Clone Repo – Pulls the latest code from GitHub (main branch).
+> Place your 4 screenshots inside a folder named `images/` in your project directory.
 
-Install – Runs npm install to install dependencies.
+---
 
-Unit Test – Executes unit tests using npm test.
+## 🔧 Technologies
 
-Integration Test – Executes integration tests via npm run test:integration.
+- Jenkins
+- Docker
+- Azure VM
+- Node.js
+- GitHub
+- sshpass & bzip2
 
-Build Docker Image – Builds a Docker image named myapp-image.
+---
 
-Deploy to Azure VM:
+## 📦 Pipeline Stages
 
-Compresses the Docker image with bzip2.
+1. ✅ Clone Repository from GitHub
+2. ✅ Install Node.js Dependencies
+3. ✅ Run Unit Tests
+4. ✅ Run Integration Tests
+5. ✅ Build Docker Image
+6. ✅ Deploy to Azure VM
 
-Sends it to the Azure VM using sshpass.
+---
 
-Decompresses and loads it into Docker.
+## 📂 Project Structure
 
-Runs the container on port 80.
+```bash
+CI-CD-Pipeline-Project/
+├── Jenkinsfile
+├── Dockerfile
+├── src/
+├── test/
+├── images/
+│   ├── pipeline.png
+│   ├── jenkins-job.png
+│   ├── azure-vm.png
+│   └── app-ui.png
+├── package.json
+└── README.md
+```
 
-🔐 Credentials Used in Jenkins
-GitHub Token – For cloning the private repository.
+---
 
-Azure VM Credentials – Stored as "Username with Password" in Jenkins 
+## 🛠️ Requirements
 
-✅ Requirements
-Jenkins installed and running
+- Jenkins installed and configured
+- Jenkins agent with:
+  - Docker
+  - Node.js
+  - `sshpass`
+  - `bzip2`
+- Azure VM:
+  - Docker installed
+  - `bzip2` installed
+  - Docker permissions granted (`sudo usermod -aG docker $USER`)
+- Jenkins Credentials:
+  - GitHub token (`github-token`)
+  - Azure VM credentials (`azure-vm` as username+password pair)
 
-Jenkins agent with:
+---
 
-Docker
+## 📄 Jenkinsfile Sample
 
-Node.js
+<details>
+<summary>Click to expand</summary>
 
-sshpass
+```groovy
+pipeline {
+  agent any
 
-bzip2
+  stages {
+    stage('Clone Repo') {
+      steps {
+        git branch: 'main', credentialsId: 'github-token', url: 'https://github.com/NimsaraPasindu/CI-CD-Pipeline-Project.git'
+      }
+    }
 
-Azure VM with:
+    stage('Install') {
+      steps {
+        sh 'npm install'
+      }
+    }
 
-Docker installed
+    stage('Unit Test') {
+      steps {
+        sh 'npm test'
+      }
+    }
 
-bzip2 installed
+    stage('Integration Test') {
+      steps {
+        sh 'npm run test:integration'
+      }
+    }
 
-node and npm installed
+    stage('Build Docker Image') {
+      steps {
+        sh 'docker build -t myapp-image .'
+      }
+    }
 
-User added to docker group
+    stage('Deploy to Azure VM') {
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'azure-vm', usernameVariable: 'AZURE_USER', passwordVariable: 'AZURE_PASS')]) {
+          sh '''
+            docker save myapp-image | bzip2 | sshpass -p "$AZURE_PASS" ssh -o StrictHostKeyChecking=no $AZURE_USER@20.42.106.121 'bunzip2 | docker load && docker run -d -p 80:3000 myapp-image'
+          '''
+        }
+      }
+    }
+  }
+}
+```
 
+</details>
 
-📌 Notes
-Make sure the Azure VM security group allows inbound traffic on port 80.
+---
 
-Avoid using StrictHostKeyChecking=no in production (use SSH key authentication instead).
+## 🔐 Credentials Used in Jenkins
 
-Ensure the Jenkins user has permission to run Docker.
+| Credential ID | Type | Usage |
+|---------------|------|-------|
+| `github-token` | GitHub Access Token | Clone private repo |
+| `azure-vm`     | Username/Password   | SSH login to Azure VM |
+
+---
+
+## 🙌 Author
+
+- **Pasindu Nimsara**
+- GitHub: [@NimsaraPasindu](https://github.com/NimsaraPasindu)
+
+---
+
+## 🌐 Optional: Live App
+
+> 🖥️ Visit your app at [http://<your-azure-ip>](http://<your-azure-ip>)
+
+---
+
+## 📝 How to Run Locally
+
+```bash
+# Clone the repo
+git clone https://github.com/NimsaraPasindu/CI-CD-Pipeline-Project.git
+cd CI-CD-Pipeline-Project
+
+# Install dependencies
+npm install
+
+# Run tests
+npm test
+```
+
+---
+
+## 💡 Tips
+
+- Install `sshpass` and `bzip2` on Jenkins and Azure VM.
+- Use `.dockerignore` to reduce Docker image size.
+- Setup Azure firewall to allow traffic on port 80.
+
+---
+
+## 📬 Feedback
+
+If you find bugs or want to contribute, feel free to open issues or pull requests!
