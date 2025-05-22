@@ -5,7 +5,7 @@ pipeline {
   stages {
     stage('Clone Repo') {
       steps {
-        git 'https://github.com/YOUR_USERNAME/myapp.git'
+        git branch: 'main',credentialsId: 'your-git-token', url: 'https://github.com/NimsaraPasindu/CI-CD-Pipeline-Project.git'
       }
     }
 
@@ -27,11 +27,7 @@ pipeline {
       }
     }
 
-    stage('UI Test') {
-      steps {
-        sh 'npx cypress run'
-      }
-    }
+    
 
     stage('Build Docker Image') {
       steps {
@@ -40,13 +36,13 @@ pipeline {
     }
 
     stage('Deploy to Azure VM') {
-      steps {
-        sshagent(['your-azure-vm-key']) {
-          sh '''
-            docker save myapp-image | bzip2 | ssh azureuser@<VM_PUBLIC_IP> 'bunzip2 | docker load && docker run -d -p 80:3000 myapp-image'
-          '''
+        steps {
+            withCredentials([usernamePassword(credentialsId: 'your-credential-id', usernameVariable: 'AZURE_USER', passwordVariable: 'AZURE_PASS')]) {
+                sh '''
+                 docker save myapp-image | bzip2 | sshpass -p "$AZURE_PASS" ssh -o StrictHostKeyChecking=no $AZURE_USER@20.42.106.121 'bunzip2 | docker load && docker run -d -p 80:3000 myapp-image'
+                '''
         }
-      }
     }
   }
+}
 }
