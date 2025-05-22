@@ -3,7 +3,6 @@
 
 This project demonstrates a complete CI/CD pipeline for a Node.js application using **Jenkins**, **Docker**, and an **Azure Virtual Machine**.
 
-(image/1.png)
 
 
 ---
@@ -47,7 +46,6 @@ This project demonstrates a complete CI/CD pipeline for a Node.js application us
   - GitHub token (`github-token`)
   - Azure VM credentials (`azure-vm` as username+password pair)
 
- (image/2.png) 
 
 ---
 
