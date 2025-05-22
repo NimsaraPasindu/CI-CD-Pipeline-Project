@@ -53,10 +53,10 @@ This project demonstrates a complete CI/CD pipeline for a Node.js application us
 
 ## 🔐 Credentials Used in Jenkins
 
-| Credential ID | Type | Usage |
-|---------------|------|-------|
-| `github-token` | GitHub Access Token | Clone private repo |
-| `azure-vm`     | Username/Password   | SSH login to Azure VM |
+| Type                | Usage                 |
+|---------------------|-----------------------|
+| GitHub Access Token | Clone private repo    |
+| Username/Password   | SSH login to Azure VM |
 
 ---
 
