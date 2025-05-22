@@ -3,19 +3,8 @@
 
 This project demonstrates a complete CI/CD pipeline for a Node.js application using **Jenkins**, **Docker**, and an **Azure Virtual Machine**.
 
----
+(image/1.png)
 
-## 📸 Project Demo
-
-| Jenkins Pipeline | Jenkins Job |
-|------------------|-------------|
-| ![Pipeline](images/pipeline.png) | ![Jenkins Job](images/jenkins-job.png) |
-
-| Azure VM Terminal | App in Browser |
-|-------------------|----------------|
-| ![Azure VM](images/azure-vm.png) | ![App UI](images/app-ui.png) |
-
-> Place your 4 screenshots inside a folder named `images/` in your project directory.
 
 ---
 
@@ -41,24 +30,6 @@ This project demonstrates a complete CI/CD pipeline for a Node.js application us
 
 ---
 
-## 📂 Project Structure
-
-```bash
-CI-CD-Pipeline-Project/
-├── Jenkinsfile
-├── Dockerfile
-├── src/
-├── test/
-├── images/
-│   ├── pipeline.png
-│   ├── jenkins-job.png
-│   ├── azure-vm.png
-│   └── app-ui.png
-├── package.json
-└── README.md
-```
-
----
 
 ## 🛠️ Requirements
 
@@ -76,64 +47,11 @@ CI-CD-Pipeline-Project/
   - GitHub token (`github-token`)
   - Azure VM credentials (`azure-vm` as username+password pair)
 
----
-
-## 📄 Jenkinsfile Sample
-
-<details>
-<summary>Click to expand</summary>
-
-```groovy
-pipeline {
-  agent any
-
-  stages {
-    stage('Clone Repo') {
-      steps {
-        git branch: 'main', credentialsId: 'github-token', url: 'https://github.com/NimsaraPasindu/CI-CD-Pipeline-Project.git'
-      }
-    }
-
-    stage('Install') {
-      steps {
-        sh 'npm install'
-      }
-    }
-
-    stage('Unit Test') {
-      steps {
-        sh 'npm test'
-      }
-    }
-
-    stage('Integration Test') {
-      steps {
-        sh 'npm run test:integration'
-      }
-    }
-
-    stage('Build Docker Image') {
-      steps {
-        sh 'docker build -t myapp-image .'
-      }
-    }
-
-    stage('Deploy to Azure VM') {
-      steps {
-        withCredentials([usernamePassword(credentialsId: 'azure-vm', usernameVariable: 'AZURE_USER', passwordVariable: 'AZURE_PASS')]) {
-          sh '''
-            docker save myapp-image | bzip2 | sshpass -p "$AZURE_PASS" ssh -o StrictHostKeyChecking=no $AZURE_USER@20.42.106.121 'bunzip2 | docker load && docker run -d -p 80:3000 myapp-image'
-          '''
-        }
-      }
-    }
-  }
-}
-```
-
-</details>
+ (image/2.png) 
 
 ---
+
+
 
 ## 🔐 Credentials Used in Jenkins
 
@@ -149,11 +67,6 @@ pipeline {
 - **Pasindu Nimsara**
 - GitHub: [@NimsaraPasindu](https://github.com/NimsaraPasindu)
 
----
-
-## 🌐 Optional: Live App
-
-> 🖥️ Visit your app at [http://<your-azure-ip>](http://<your-azure-ip>)
 
 ---
 
@@ -169,7 +82,6 @@ npm install
 
 # Run tests
 npm test
-```
 
 ---
 
